@@ -1,0 +1,7 @@
+{
+	"ICON_FILE" : "ZoomAJIcon.ico",
+	"PYAG_PICS_DIR" : "pyag_images/",
+	"DB_URL" : "sqlite:///database.db",
+	"THEME_FILE" : "default_theme.thm.json",
+	"MY_NAME" : "advaithm582"
+}

@@ -1,0 +1,56 @@
+{
+	"title" : {
+		"fg" : "white",
+		"bg" : "gray",
+		"font" : {
+			"name" : "Lato",
+			"size" : "20",
+			"style" : "bold"
+		},
+		"padding" : {
+			"x" : "5",
+			"y" : "5"
+		},
+		"border" : {
+			"width" : null,
+			"relief" : null
+		},
+		"sticky" : "EW"
+	},
+	"table_header" : {
+		"fg" : "white",
+		"bg" : "#142E54",
+		"font" : {
+			"name" : "Lato",
+			"size" : "12",
+			"style" : "bold"
+		},
+		"padding" : {
+			"x" : "5",
+			"y" : "5"
+		},
+		"border" : {
+			"width" : 2,
+			"relief" : "groove"
+		},
+		"sticky" : "NSEW"
+	},
+	"table_content" : {
+		"fg" : "black",
+		"bg" : "white",
+		"font" : {
+			"name" : "Lato",
+			"size" : "8",
+			"style" : "bold"
+		},
+		"padding" : {
+			"x" : "5",
+			"y" : "5"
+		},
+		"border" : {
+			"width" : 2,
+			"relief" : "groove"
+		},
+		"sticky" : "NSEW"
+	}
+}
