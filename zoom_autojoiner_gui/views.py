@@ -81,7 +81,7 @@ class ApplicationMenuBar(tk.Menu):
 class MeetingListFrame(tk.Frame):
     __components = []        # TK/TTK widgets
     __current_table_row = 1  # Current row of the table
-    def __init__(self, root_element, tk_theme_object = None):
+    def __init__(self, root_element, tk_theme_object = None, autojoiner_handle=None):
         """This class creates the frame that displays the list of meetings."""
         super().__init__(root_element)
 
@@ -95,6 +95,12 @@ class MeetingListFrame(tk.Frame):
             self.tk_theme = TkinterTheme(THEME_FILE)
         else:
             self.tk_theme = tk_theme_object
+
+        # Autojoiner
+        if autojoiner_handle:
+            self.__autojoiner_handle = autojoiner_handle
+        else:
+            self.__autojoiner_handle = Autojoiner(PYAG_PICS_DIR)
 
         # Sticky grid that resizes according to window size.
         # tk.Grid.rowconfigure(root_element, row, weight=1)
@@ -162,7 +168,7 @@ class MeetingListFrame(tk.Frame):
         self.create_tk_label(meeting_time.strftime("%a %d %B %Y %I:%M:%S %p"), row=row_no, column=0, **styling)
         self.create_tk_label(meeting_id, row=row_no, column=1, **styling)
         self.create_tk_label(meeting_password, row=row_no, column=2, **styling)
-        self.create_ttk_button("Join meeting", row=row_no, column=3)
+        self.create_ttk_button("Join meeting", row=row_no, column=3, command=lambda: self.__autojoiner_handle.join_zm_mtg(meeting_id, meeting_password))
         self.create_ttk_button("Edit/Delete meeting", row=row_no, column=4, command=lambda: EditMeetingDialog(record_id, tk_root_element = self.root_element))
         self.__current_table_row += 1
 
@@ -191,11 +197,14 @@ class MeetingListFrame(tk.Frame):
 
 class ApplicationStatusBar(tk.Label):
     """Status bar"""
-    def __init__(self, root_element):
+    def __init__(self, root_element, autojoiner_handle = None):
         super().__init__(root_element, text="Loading…", bd=1, relief=tk.SUNKEN, anchor=W)
 
         # Autojoiner
-        self.__autojoiner_handle = Autojoiner(PYAG_PICS_DIR)
+        if autojoiner_handle:
+            self.__autojoiner_handle = autojoiner_handle
+        else:
+            self.__autojoiner_handle = Autojoiner(PYAG_PICS_DIR)
 
         self.iterator()
 
@@ -224,8 +233,9 @@ class MainWindow(tk.Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # TK Styling object
-        self.__tk_theme = TkinterTheme(THEME_FILE)
+        # Object instances
+        self.__tk_theme = TkinterTheme(THEME_FILE)           # TK Styling object
+        self.__autojoiner_handle = Autojoiner(PYAG_PICS_DIR) # Autojoiner handler
 
         # Window Titles
         self.title('Zoom Autojoiner')
@@ -242,14 +252,14 @@ class MainWindow(tk.Tk):
         
         # Window Elements
         # Meetings List
-        self.meeting_list_frame = MeetingListFrame(self, self.__tk_theme)
+        self.meeting_list_frame = MeetingListFrame(self, self.__tk_theme, autojoiner_handle=self.__autojoiner_handle)
         # Elasticity
         tk.Grid.rowconfigure(self, 1, weight=1)
         tk.Grid.columnconfigure(self, 0, weight=1)
         # Positioning
         self.meeting_list_frame.grid(row=1, column=0, sticky=N+S+E+W)
 
-        self.statusbar = ApplicationStatusBar(self)
+        self.statusbar = ApplicationStatusBar(self, autojoiner_handle=self.__autojoiner_handle)
         # Elasticity
         # tk.Grid.rowconfigure(self, 2, weight=1)
         # tk.Grid.columnconfigure(self, 0, weight=1)
