@@ -60,6 +60,5 @@ Date must be in YYYY:MM:DD HH:MM:SS in 24-hour format (ISO standard)
 Similarly you can edit your meeting too
 
 # To be implemented (Todo)
-* Enable Join Meeting button
 * Support for clearing data in menubar
 * Support for a common office notice board using a common database, including privilleges.
