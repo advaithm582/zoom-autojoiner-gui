@@ -1,0 +1,56 @@
+{
+	"title" : {
+		"fg" : "white",
+		"bg" : "black",
+		"font" : {
+			"name" : "Calibri",
+			"size" : "20",
+			"style" : "bold"
+		},
+		"padding" : {
+			"x" : "5",
+			"y" : "5"
+		},
+		"border" : {
+			"width" : null,
+			"relief" : null
+		},
+		"sticky" : "EW"
+	},
+	"table_header" : {
+		"fg" : "white",
+		"bg" : "#142E54",
+		"font" : {
+			"name" : "Calibri",
+			"size" : "12",
+			"style" : "bold"
+		},
+		"padding" : {
+			"x" : "5",
+			"y" : "5"
+		},
+		"border" : {
+			"width" : 1,
+			"relief" : "groove"
+		},
+		"sticky" : "NSEW"
+	},
+	"table_content" : {
+		"fg" : "white",
+		"bg" : "black",
+		"font" : {
+			"name" : "Calibri",
+			"size" : "12",
+			"style" : "bold"
+		},
+		"padding" : {
+			"x" : "5",
+			"y" : "5"
+		},
+		"border" : {
+			"width" : 1,
+			"relief" : "groove"
+		},
+		"sticky" : "NSEW"
+	}
+}

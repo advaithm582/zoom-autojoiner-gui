@@ -1,11 +1,35 @@
-import json, time, pyautogui, platform, logging
+# This file is part of Zoom Autojoiner GUI.
+
+# Zoom Autojoiner GUI is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Zoom Autojoiner GUI is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Zoom Autojoiner GUI.  If not, see <https://www.gnu.org/licenses/>.
+
+import json
+import time
+import platform
+import logging
 from datetime import datetime
+from typing import Any, Optional
+
+import pyautogui
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Query
+
 from zoom_autojoiner_gui.models import Meetings
 from zoom_autojoiner_gui.constants import DB_URL, MY_NAME
 
+
 logger = logging.getLogger(__name__)
+
 
 class TkinterTheme():
     """
@@ -27,7 +51,7 @@ class TkinterTheme():
     I am not sure how to fix the same, hence 
     leaving as is.
     """
-    DEFAULT_THEME:str = """
+    DEFAULT_THEME: str = """
             {
                 "title" : {
                     "fg" : "white",
@@ -89,27 +113,24 @@ class TkinterTheme():
         try:
             with open(theme_file_uri, "r") as file_handle:
                 self.json = json.loads(file_handle.read())
-        except Exception as e:
-            logger.warning("Failed to load theme file, using default...", exc_info=True)
+        except:
+            logger.warning("Failed to load theme file, using default...", 
+                exc_info=True)
             self.json = json.loads(self.DEFAULT_THEME)
         else:
             logger.info("Loaded theme file")
 
-    # def get_table_header_styling(self):
-    #     """Gets the style to be used for the table header"""
-    #     the_dict = {
-    #             "fg" : self.json["table_header"]["fg"],
-    #             "bg" : self.json["table_header"]["bg"],
-    #             "padx" : self.json["table_header"]["padding"]["x"],
-    #             "pady" : self.json["table_header"]["padding"]["y"],
-    #             "borderwidth" : self.json["table_header"]["border"]["width"],
-    #             "relief" : self.json["table_header"]["border"]["relief"],
-    #             "font" : self.json["table_header"]["font"]["name"] + " " + self.json["table_header"]["font"]["size"] + " " + self.json["table_header"]["font"]["style"]
-    #         }
-    #     return the_dict
+    def get_styling(self, style_name: str) -> dict:
+        """get_styling 
+        
+        Gets the style to be used for given style name.
 
-    def get_styling(self, style_name):
-        """Gets the style to be used for the <style_name>"""
+        Args:
+            style_name: The name of the style.
+
+        Returns:
+            dict: The dict of TK styling to be unpacked and passed.
+        """
         if style_name in self.json:
             the_dict = {
                     "fg" : self.json[style_name]["fg"],
@@ -118,61 +139,146 @@ class TkinterTheme():
                     "pady" : self.json[style_name]["padding"]["y"],
                     "borderwidth" : self.json[style_name]["border"]["width"],
                     "relief" : self.json[style_name]["border"]["relief"],
-                    "font" : self.json[style_name]["font"]["name"] + " " + self.json["table_header"]["font"]["size"] + " " + self.json["table_header"]["font"]["style"]
+                    "font" : (self.json[style_name]["font"]["name"] 
+                        + " " 
+                        + self.json["table_header"]["font"]["size"] 
+                        + " " 
+                        + self.json["table_header"]["font"]["style"])
                 }
             return the_dict
         else:
             # no style available
             return {}
 
+
 class DatabaseHandler():
-    def __init__(self, database_uri):
+    """DatabaseHandler
+    
+    This class handles database related stuff. It's like a waiter in a
+    restaurant - it handles communications between the customer (view)
+    and the cook (database). In technical terms, it is a controller in
+    the MVC architecture.
+
+    Args:
+        database_uri:
+            The URI of the database, in SQLAlchemy format.
+    """
+    def __init__(self, database_uri: str) -> None:
         # engine = create_engine(DB_URL)
         engine = create_engine(database_uri)
         Session = sessionmaker(bind=engine)
         self.__db_session = Session()
 
-    def add_mtg(self, meeting_id, meeting_password, meeting_time, meeting_provider = "ZM", auto_commit = True):
-        """Adds a mtg to the portfolio"""
-        mtg = Meetings(mtg_provider=meeting_provider, mtg_id=meeting_id, mtg_password=meeting_password, mtg_time=meeting_time)
+    def add_mtg(self, meeting_id: str, meeting_password: str, 
+            meeting_time: datetime, meeting_provider: str = "ZM",
+            auto_commit: bool = True) -> None:
+        """add_mtg 
+        
+        Adds a meeting to the database.
+
+        Args:
+            meeting_id: The Meeting ID
+            meeting_password: Mtg. passcode
+            meeting_time: Datetime of meeting
+            meeting_provider: Meeting Provider. Defaults to "ZM".
+            auto_commit: Whether to autosave changes. Defaults to True.
+        """
+        mtg = Meetings(mtg_provider=meeting_provider, mtg_id=meeting_id, 
+            mtg_password=meeting_password, mtg_time=meeting_time)
         self.__db_session.add(mtg)
         if auto_commit:
             self.commit_changes()
 
-    def delete_mtg(self, rec_id, auto_commit = True):
-        """Deletes a mtg from the portfolio"""
-        to_delete = self.__db_session.query(Meetings).filter_by(id=rec_id).one()
+    def delete_mtg(self, rec_id: int, auto_commit: bool = True) -> None:
+        """delete_mtg 
+        
+        Deletes a meeting from the database.
+
+        Args:
+            rec_id: The Record ID in database
+            auto_commit:
+                Whether to auto commit changes. Defaults to True.
+        """
+        to_delete = self.__db_session.query(Meetings).filter_by(id=
+            rec_id).one()
         self.__db_session.delete(to_delete)
         if auto_commit:
             self.commit_changes()
 
-    def update_mtg(self,db_id, meeting_id, meeting_password, meeting_time, meeting_provider = "ZM", auto_commit = True):
-        """Updates the mtg data in the database"""
-        to_update = self.__db_session.query(Meetings).filter_by(id=db_id).one()
-        (to_update.mtg_provider, to_update.mtg_id, to_update.mtg_password, to_update.mtg_time) = (meeting_provider, meeting_id, meeting_password, meeting_time)
+    def update_mtg(self, db_id: int, meeting_id: str, meeting_password: str,
+            meeting_time: datetime, meeting_provider: str = "ZM",
+            auto_commit: bool = True) -> None:
+        """update_mtg 
+        
+        Update meeting data in the database.
+
+        Args:
+            db_id (int): The Record ID in database.
+            meeting_id (str): The Meeting ID.
+            meeting_password (str): The Meeting password.
+            meeting_time (datetime.datetime): The time of the meeting.
+            meeting_provider (str, optional):
+                Meeting provider code. Defaults to "ZM".
+            auto_commit (bool, optional):
+                Whether to autosave changes. Defaults to True.
+        """
+        to_update = self.__db_session.query(Meetings).filter_by(id=
+            db_id).one()
+        to_update.mtg_provider = meeting_provider
+        to_update.mtg_id = meeting_id
+        to_update.mtg_password = meeting_password
+        to_update.mtg_time = meeting_time
         if auto_commit:
             self.commit_changes()
 
-    def get_mtg_data_to_list(self):
-        """Queries meeting data from SQL database and outputs it as a list cum dict"""
+    def get_mtg_data_to_list(self) -> list[dict[str, Any]]:
+        """get_mtg_data_to_list 
+        
+        Queries meeting data from SQL database and outputs it as a
+        list cum dict
+
+        Returns:
+            list: List with dict of mtg data.
+        """
         output_list = [] # Output list
-        query = self.__db_session.query(Meetings).order_by(Meetings.mtg_time)
+        query = self.__db_session.query(Meetings).order_by(
+            Meetings.mtg_time)
         for record in query:
             mtg_data = {
                 "id" : record.id,
-                "mtg_provider" : record.mtg_provider, # mtg_provider
-                "mtg_id" : record.mtg_id, # No. of mtg owned
+                "mtg_provider" : record.mtg_provider, 
+                "mtg_id" : record.mtg_id, 
                 "mtg_password" : record.mtg_password,
-                "mtg_time": record.mtg_time # Price per mtg at time of purchase
+                "mtg_time": record.mtg_time 
             }
             # print(type(record.mtg_time))
             output_list.append(mtg_data)
         return output_list
 
-    def get_single_mtg_data_to_list(self, record_id):
-        """Queries only one meeting from SQL database and outputs it as a list cum dict"""
+    def get_single_mtg_data_to_list(self, record_id: str) -> dict[str, Any]:
+        """get_single_mtg_data_to_list
+
+        Queries only one meeting from SQL database and outputs it as a
+        dict
+
+        Note:
+            The method name is redundant, as it was imported from 
+            `cryptocurrency-portfolio`_. It will be changed before the 
+            release of the 1.x.x series. To ensure backwards
+            compatibility, this method will be made to call the dict
+            method.
+
+        Args:
+            record_id (str): ID of record in database.
+
+        Returns:
+            dict[str, Any]: Dict containing meeting data of record ID.
+
+        .. _cryptocurrency-portfolio: https://tinyurl.com/48a7y5cw
+        """
         # output_list = [] # Output list
-        record = self.__db_session.query(Meetings).filter_by(id=record_id).one()
+        record = self.__db_session.query(Meetings).filter_by(id=record_id) \
+            .one()
         output_list = {
             "id" : record.id,
             "mtg_provider" : record.mtg_provider, # mtg_provider
@@ -183,22 +289,57 @@ class DatabaseHandler():
         # output_list.append(mtg_data)
         return output_list
     
-    def get_mtg_with_time(self, time):
-        """Get the meeting data, using time as a filter.
-        Used for checking if it is time to join the meeting"""
-        query = self.__db_session.query(Meetings).filter(Meetings.mtg_time == time).order_by(Meetings.mtg_time)
+    def get_mtg_with_time(self, time: datetime) -> list[Query]:
+        """get_mtg_with_time 
+
+        Get the meeting data, using time as a filter.
+        Used for checking if it is time to join the meeting.
+
+        Note:
+            This API is not used and is kept for the future. The reason 
+            is that this heavily depends on the seconds parameter, and
+            if the autojoiner checks for meetings every second, it will
+            consume too many resources.
+
+            If you have a solution to this problem, please fork the 
+            repo and feel free to open a PR.
+
+        Args:
+            time: The time filter.
+
+        Returns:
+            list[Query]:
+                It is a normal SQLAlchemy object which has a list, and
+                in each an object.
+        """
+        query = self.__db_session.query(Meetings).filter(Meetings.mtg_time \
+            == time).order_by(Meetings.mtg_time)
+        # logger.debug(type(query))
         return query
 
-    def truncate_table(self, auto_commit = True):
-        """Remove all meetings"""
+    def truncate_table(self, auto_commit: bool = True) -> None:
+        """truncate_table 
+        
+        Clear all data in the table.
+        This API is yet to be implemented. As always, this method was 
+        taken from `cryptocurrency-portfolio`_.
+
+        Args:
+            auto_commit:
+                Whether to autosave changes. Defaults to True.
+
+        .. _cryptocurrency-portfolio: https://tinyurl.com/48a7y5cw
+        """
+        # Remove all meetings
         self.__db_session.query(Meetings).delete()
         if auto_commit:
             self.commit_changes()
 
 
-    def commit_changes(self):
+    def commit_changes(self) -> None:
         """Make changes reflect in database"""
         self.__db_session.commit()
+
 
 class ATLParser():
     """
@@ -208,22 +349,50 @@ class ATLParser():
     .atl. These are simple JSON files. For the format, see 
     specification.atl in the 'scripts' folder.
 
-    ATL code is used internally by Zoom Autojoiner to enable joining
-    of meetings on different platforms (OSes).
+    ATL code will be used internally by Zoom Autojoiner to enable 
+    joining of meetings on different platforms (OSes).
+
+    Note:
+        The ATL parser will be implemented as an extension and not in
+        the ZAJ core. Infact, this idea may be DROPPED itself, as it
+        can impact performance.
     """
-    
+    pass
+
+
 class Autojoiner():
     """
-    Zoom Autojoiner Class
+    Autojoiner
 
-    This class contains functions that will help in automatically joining meetings.
+    This class contains functions that will help in automatically
+    joining Zoom meetings.
+
+    Note:
+        This class may be moved to an extension in the next major
+        release.
+
+    Args:
+        image_dir: The directory where images are stored.
     """
-    def __init__(self, image_dir = ""):
+    def __init__(self, image_dir: str = "") -> None:
         self.__dbh = DatabaseHandler(DB_URL) # dbh is DB handle
         self.IMG_DIR = image_dir # e.g /usr/share/
 
-    def get_image_path(self, filename):
-        """Get the path of the image from the filename."""
+    def get_image_path(self, filename: str) -> str:
+        """get_image_path 
+
+        Get the path to the image with correct slash for the OS.
+
+        Note:
+            It will be more efficient if os.path.join is used instead.
+
+        Args:
+            filename (str): The name of the file.
+
+        Returns:
+            str: The full directory path.
+        """
+        # Get the path of the image from the filename.
         # Get the directory slash.
         # Why couldn't Windows be like the rest? :(
         OS_SLASH = "\\" if platform.system() == "Windows" else "/"
@@ -243,7 +412,16 @@ class Autojoiner():
         # Return the file directory.
         return img_directory + final_filename
 
-    def check_for_meeting(self):
+    def check_for_meeting(self) -> Optional[dict, bool]:
+        """check_for_meeting 
+        
+        Checks if there is a meeting at the current time.
+
+        Returns:
+            Optional[dict, bool]: 
+                Returns list of meetings, if a meeting is present at
+                that time.
+        """
         logger.debug("Check For Meeting Block entered")
         mtgs_list = self.__dbh.get_mtg_data_to_list()
         logger.debug(str(mtgs_list))
@@ -266,8 +444,15 @@ class Autojoiner():
         logger.debug("Return Dict %s", str(return_dict))
         return return_dict if return_str else False
 
-    def join_zm_mtg(self, id, password):
-        """join zm mtg"""
+    def join_zm_mtg(self, id: str, password: str) -> None:
+        """join_zm_mtg
+
+        Joins a zoom meeting
+
+        Args:
+            id (str): Meeting ID
+            password (str): Meeting Passcode
+        """
         try:
             # IMG_DIR = self.IMG_DIR
             # (start_x, start_y) = pyautogui.center(pyautogui.locateOnScreen(IMG_DIR + "start.png"))

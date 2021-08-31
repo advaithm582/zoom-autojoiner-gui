@@ -33,7 +33,7 @@ class NewMeetingDialog(tk.Toplevel):
             self.tk_frame_handle = tk_frame_handle
         elif self.tk_root_element:
             # Take from root element
-            self.tk_frame_handle = self.tk_root_element.meeting_list_frame
+            self.tk_frame_handle = self.tk_root_element.__meeting_list_frame
         else:
             # None it
             self.tk_frame_handle = None
@@ -159,7 +159,7 @@ class EditMeetingDialog(tk.Toplevel):
             self.tk_frame_handle = tk_frame_handle
         elif self.tk_root_element:
             # Take from root element
-            self.tk_frame_handle = self.tk_root_element.meeting_list_frame
+            self.tk_frame_handle = self.tk_root_element.__meeting_list_frame
         else:
             # None it
             self.tk_frame_handle = None

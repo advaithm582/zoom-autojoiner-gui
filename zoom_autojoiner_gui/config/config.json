@@ -1,0 +1,7 @@
+{
+	"ICON_FILE" : "ZoomAJIcon.ico",
+	"PYAG_PICS_DIR" : "C:\\Users\\advai\\OneDrive\\Documents\\Programmed tools\\Zoom AutoJoiner GUI\\zoom_autojoiner_gui\\zoom_autojoiner_gui\\zaj_pyautogui\\pyag_images",
+	"DB_URL" : "sqlite:///database.db",
+	"THEME_FILE" : "default_theme.thm.json",
+	"MY_NAME" : "Advaith Menon"
+}

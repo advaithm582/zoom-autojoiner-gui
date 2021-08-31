@@ -1,17 +1,23 @@
 import logging
 from datetime import datetime
-from multiprocessing import Process
+# from multiprocessing import Process
 
 # I am here because the ZAJ module has some logging work to do..
 # Check that my level is set to logging.INFO
-logging.basicConfig(filename='logs/%s.log' % (datetime.now().strftime("%Y%m%d-%H%M%S")), filemode='w', format='[%(asctime)s] [%(name)s:%(levelname)s] [pid:%(process)d, tid:%(thread)d] %(message)s', datefmt='%c', level=logging.INFO)
+logging.basicConfig(filename='logs/%s.log' % (datetime.now().strftime("%Y%m"
+    "%d-%H%M%S")), filemode='w', format=('[%(asctime)s] [%(name)s:%(levelna'
+    'me)s] [pid:%(process)d, tid:%(thread)d] %(message)s'), datefmt='%c', 
+    level=logging.DEBUG)
 
 from zoom_autojoiner_gui.views import MainWindow
+from zoom_autojoiner_gui.extensions import ExtensionHandler
+from zoom_autojoiner_gui.constants import EXTENSIONS
 
 logger = logging.getLogger(__name__) # This creates logger for this file.
 
 def load_window():
-    """
+    """load_window
+
     Load the Main Window
 
     Load the main Tk window. The reason this is here 
@@ -41,7 +47,8 @@ def main():
         from ctypes import windll
         windll.shcore.SetProcessDpiAwareness(1) # High DPI
     except:
-        logger.warning('Windows - Failed to enable High DPI awareness. Maybe not on Windows?')
+        logger.warning('Windows - Failed to enable High DPI awareness.'
+            ' Maybe not on Windows?')
     else:
         logger.info('Windows - High DPI awareness Enabled')
 
@@ -54,6 +61,6 @@ def main():
     except:
         pass
         # logger.critical("Failed to start child process!!!", exc_info=True)
-
+    
 if __name__ == "__main__":
     main()
