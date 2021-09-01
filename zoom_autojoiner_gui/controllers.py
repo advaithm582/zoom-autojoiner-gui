@@ -18,7 +18,7 @@ import time
 import platform
 import logging
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Union
 
 import pyautogui
 from sqlalchemy import create_engine
@@ -412,7 +412,7 @@ class Autojoiner():
         # Return the file directory.
         return img_directory + final_filename
 
-    def check_for_meeting(self) -> Optional[dict, bool]:
+    def check_for_meeting(self) -> Union[dict, bool]:
         """check_for_meeting 
         
         Checks if there is a meeting at the current time.

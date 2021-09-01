@@ -20,6 +20,13 @@ Now you found this. You just add your meeting in the intutive interface and BAM!
 # User Manual
 ## Installation and Configuration
 ### Configuring constants in `config.json`
+
+> **WARNING:** This portion of the user manual is outdated!!! 
+> Also, with detailed comments in the config files (see below), this portion of the manual may be considered redundant.
+> 
+> * [Application Configuration Sample File](https://github.com/advaithm582/zoom-autojoiner-gui/blob/main/zoom_autojoiner_gui/config/application-default.ini)
+> * [Extensions Configuration Sample File](https://github.com/advaithm582/zoom-autojoiner-gui/blob/main/zoom_autojoiner_gui/config/extensions-default.ini)
+
 ```
 {
 	"ICON_FILE" : "ZoomAJIcon.ico",
@@ -49,6 +56,7 @@ zoom_taskbar.png | A picture of Zoom in the taskbar. |
 join_btn.png | A picture of the blue Join button in the Zoom home screen. to the right of orange New Meeting. | 
 name_box.png | A picture of your name in the Join meeting box. Below the Meeting ID prompt. | 
 join_btn_after_mtg_id.png | The Join Meeting button in the Enter Passcode page. |
+
 
 ## Usage
 Using the software is quite simple - just go to Menubar - Meetings - Add meeting. 
