@@ -14,11 +14,11 @@ Guidelines
 ==========
 + All code must adhere to **PEP 8**. 
 + When writing docstrings, follow **Google Style.**
-  - Please be succinct when writing the docstring
+    + Please be succinct when writing the docstring
 + Add PEP 484 type hints.
 + Try to use the new Extensions API to the maximum extent.
 + Do write code that
-  - fixes issues
-  - implements features that fall into the `goals`_ of this project
+    + fixes issues
+    + implements features that fall into the `goals`_ of this project
 
 .. _`goals`: https://github.com/advaithm582/zoom-autojoiner-gui#goals
