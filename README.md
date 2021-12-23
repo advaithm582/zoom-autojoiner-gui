@@ -7,26 +7,32 @@ TL;DR A tool to join Zoom meetings quickly. Comes with a GUI. Prior configuratio
 * To remind that it is time to join a meeting
 * To aid in typing long meeting IDs and passcodes
 
-## Use Scenario:
-You are working on an assignment, and you are so focused that you forget that your meeting is now. When you realise that you had the meeting, you open Whatsapp Web to get the passcode and ID. It takes 10 minutes to load, only to show you that it can't connect to the phone. Now you scramble about for your cell phone. You are furious as Fingerprint Unlock fails. Finally, you copy the Meeting ID to the Zoom interface, enter the passcode wrongly once, and join the meeting. Once you join, you realise that you have joined in your mother's account.
-
-Now you found this. You just add your meeting in the intutive interface and BAM! When it is time, you will find your cursor automatically moving, and you will now remember about the meeting, and you can get ready while we do the clicking for you!
-
 ## What **not** to use this program for:
 * Overloading Zoom Servers with Join Meeting requests
 * Attending your classes/meetings on your behalf
 * Other uses that do not fit in to the goals of this program
 
+## Features
+* Easy to configure
+* Simple to use GUI
+* Highly extensible with [Extensions](https://github.com/advaithm582/zaj-extensions)
+
+## Use Scenario:
+You are working on an assignment, and you are so focused that you forget that your meeting is now. When you realise that you had the meeting, you open Whatsapp Web to get the passcode and ID. It takes 10 minutes to load, only to show you that it can't connect to the phone. Now you scramble about for your cell phone. You are furious as Fingerprint Unlock fails. Finally, you copy the Meeting ID to the Zoom interface, enter the passcode wrongly once, and join the meeting. Once you join, you realise that you have joined in your mother's account.
+
+Now you found this. You just add your meeting in the intutive interface and BAM! When it is time, you will find your cursor automatically moving, and you will now remember about the meeting, and you can get ready while we do the clicking for you!
+
 # User Manual
 ## Installation and Configuration
 ### Configuring constants in `config.json`
 
-> **WARNING:** This portion of the user manual is outdated!!! 
+<!---> **WARNING:** This portion of the user manual is outdated!!! 
 > Also, with detailed comments in the config files (see below), this portion of the manual may be considered redundant.
-> 
+> --->
 > * [Application Configuration Sample File](https://github.com/advaithm582/zoom-autojoiner-gui/blob/main/zoom_autojoiner_gui/config/application-default.ini)
 > * [Extensions Configuration Sample File](https://github.com/advaithm582/zoom-autojoiner-gui/blob/main/zoom_autojoiner_gui/config/extensions-default.ini)
 
+<!--
 ```
 {
 	"ICON_FILE" : "ZoomAJIcon.ico",
@@ -43,7 +49,7 @@ PYAG_PICS_DIR | This directory contains all `.png` files required for the Autojo
 DB_URL | SQLAlchemy DB URI to be used. You can also connect to a common database server and then, Whoa! You have a network-wide Meeting Notice Board!
 THEME_FILE | A simple theme file to change the appearance of the window. You can meddle around with the colors, fonts, etc.
 MY_NAME | The name Autojoiner will change to when you join the meeting. Required.
-
+-->
 ### Adding the images to `PYAG_PICS_DIR`
 
 First, pin Zoom to your taskbar. This will be how ZAJ opens Zoom. Then, take screenshots and name the files as below:
