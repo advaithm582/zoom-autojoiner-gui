@@ -1,3 +1,6 @@
+> ⚠️ WARNING: This project is now deprecated. If you need a solution for the same, either fork this reopsitory
+> or find another solution.
+
 # Zoom Autojoiner
 
 TL;DR A tool to join Zoom meetings quickly. Comes with a GUI. Prior configuration needed.
